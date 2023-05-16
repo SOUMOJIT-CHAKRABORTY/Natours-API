@@ -40,6 +40,17 @@ exports.createTour = (req, res) => {
   );
 };
 
+exports.checkID = (req, res, next, val) => {
+  if (req.params.id * 1 > tours.length) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Invaild ID',
+    });
+  }
+
+  next();
+};
+
 exports.getTour = (req, res) => {
   const id = req.params.id * 1;
   const tour = tours.find((el) => el.id === id);
@@ -61,33 +72,19 @@ exports.getTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invaild ID',
-    });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour: '<This is Updated Tour>',
-      },
-    });
-  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour: '<This is Updated Tour>',
+    },
+  });
 };
 
 exports.deleteTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invaild ID',
-    });
-  } else {
-    res.status(204).json({
-      status: 'success',
-      data: {
-        tour: null,
-      },
-    });
-  }
+  res.status(204).json({
+    status: 'success',
+    data: {
+      tour: null,
+    },
+  });
 };
