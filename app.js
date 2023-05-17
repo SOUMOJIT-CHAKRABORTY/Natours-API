@@ -1,6 +1,9 @@
 const fs = require('fs');
+
 const express = require('express');
+
 const morgan = require('morgan');
+
 const app = express();
 
 const tourRouter = require('./Routes/tourRouter');
@@ -8,7 +11,10 @@ const userRouter = require('./Routes/userRouter');
 
 // MIDDLEWARES
 app.use(express.json());
-app.use(morgan('dev'));
+if (process.env.ENV_NODE === 'development') {
+  app.use(morgan('dev'));
+}
+app.use(express.static(`${__dirname}/public`));
 // Creating Our Own Middlewares -->
 app.use((req, res, next) => {
   console.log('Creating Middlewares 🙏🏻');
