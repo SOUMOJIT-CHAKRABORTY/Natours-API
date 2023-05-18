@@ -1,8 +1,16 @@
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');
-const { default: mongoose } = require('mongoose');
+
+const DB = process.env.CONNECTION_STRING;
+
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+  })
+  .then((res) => console.log('Connected to Database'));
 
 const tourSchema = new mongoose.Schema({
   name: {
