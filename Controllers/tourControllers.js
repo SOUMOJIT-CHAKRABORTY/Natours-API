@@ -2,6 +2,13 @@ const express = require('express');
 const Tour = require('../models/tourModels');
 
 // Middlewares
+// Alias Route
+exports.topFiveCheap = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = 'price,-ratingsAverage';
+  req.query.fields = 'difficulty,ratingsAverage,price,name';
+  next();
+};
 
 // Route Handlers
 
@@ -35,6 +42,17 @@ exports.getAllTours = async (req, res) => {
       query = query.select(limitFields);
     } else {
       query = query.select('-__v');
+    }
+
+    // Setting Limits
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) throw new Error('This page does not exist');
     }
 
     // EXECUTE THE QUERY
