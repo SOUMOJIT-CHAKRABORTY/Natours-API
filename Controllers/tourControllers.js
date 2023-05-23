@@ -10,22 +10,42 @@ exports.topFiveCheap = (req, res, next) => {
   next();
 };
 
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    // BUILD THE QUERY
+    // Filtering
+    const queryObjs = { ...this.queryString };
+    const excludedFields = ['limit', 'page', 'sort', 'fields'];
+    excludedFields.forEach((el) => delete queryObjs[el]);
+    // Advanced Filtering
+    let queryStr = JSON.stringify(queryObjs);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    this.query.find(JSON.parse(queryStr));
+    // let query = Tour.find(JSON.parse(queryStr));
+  }
+}
+
 // Route Handlers
 
 exports.getAllTours = async (req, res) => {
   try {
-    // BUILD THE QUERY
-    // Filtering
-    const queryObjs = { ...req.query };
-    const excludedFields = ['limit', 'page', 'sort', 'fields'];
-    excludedFields.forEach((el) => delete queryObjs[el]);
+    // // BUILD THE QUERY
+    // // Filtering
+    // const queryObjs = { ...req.query };
+    // const excludedFields = ['limit', 'page', 'sort', 'fields'];
+    // excludedFields.forEach((el) => delete queryObjs[el]);
 
-    console.log(req.query);
-    // Advanced Filtering
-    let queryStr = JSON.stringify(queryObjs);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // console.log(req.query);
+    // // Advanced Filtering
+    // let queryStr = JSON.stringify(queryObjs);
+    // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    let query = Tour.find(JSON.parse(queryStr));
+    // let query = Tour.find(JSON.parse(queryStr));
 
     // Sorting
     if (req.query.sort) {
@@ -56,7 +76,8 @@ exports.getAllTours = async (req, res) => {
     }
 
     // EXECUTE THE QUERY
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query.filter());
+    const tours = await features.query;
 
     // Querying the data
 
