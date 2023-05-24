@@ -28,6 +28,24 @@ class APIFeatures {
     this.query.find(JSON.parse(queryStr));
     // let query = Tour.find(JSON.parse(queryStr));
   }
+  sort() {
+    // Sorting
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort('-createdAt');
+    }
+    console.log(queryStr);
+
+    // Field Limiting
+    if (req.query.fields) {
+      const limitFields = req.query.fields.split(',').join(' ');
+      query = query.select(limitFields);
+    } else {
+      query = query.select('-__v');
+    }
+  }
 }
 
 // Route Handlers
@@ -47,22 +65,22 @@ exports.getAllTours = async (req, res) => {
 
     // let query = Tour.find(JSON.parse(queryStr));
 
-    // Sorting
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
-    console.log(queryStr);
+    // // Sorting
+    // if (req.query.sort) {
+    //   const sortBy = req.query.sort.split(',').join(' ');
+    //   query = query.sort(sortBy);
+    // } else {
+    //   query = query.sort('-createdAt');
+    // }
+    // console.log(queryStr);
 
-    // Field Limiting
-    if (req.query.fields) {
-      const limitFields = req.query.fields.split(',').join(' ');
-      query = query.select(limitFields);
-    } else {
-      query = query.select('-__v');
-    }
+    // // Field Limiting
+    // if (req.query.fields) {
+    //   const limitFields = req.query.fields.split(',').join(' ');
+    //   query = query.select(limitFields);
+    // } else {
+    //   query = query.select('-__v');
+    // }
 
     // Setting Limits
     const page = req.query.page * 1 || 1;
