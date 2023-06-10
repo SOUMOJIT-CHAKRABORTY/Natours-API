@@ -52,6 +52,10 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have a cover image'],
     },
     images: [String], // array of strings
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
     createdAt: {
       type: Date,
       default: Date.now(),
@@ -75,6 +79,21 @@ tourSchema.pre('save', function (next) {
   next();
 });
 // we can have multiple pre and post middlewares.
+// QUERY MIDDLEWARE
+// tourSchema.pre('find', function (next) {
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`the query took ${Date.now() - this.start} milliseconds`);
+  console.log(docs);
+
+  next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
