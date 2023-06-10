@@ -9,6 +9,8 @@ const tourSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      minlength: [10, 'Minimum length should be 10'],
+      maxlength: [50, 'Maximum length should be 50'],
     },
     slug: String,
     duration: {
@@ -22,11 +24,17 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty is ethier easy, medium or difficult',
+      },
     },
     ratingsAverage: {
       // validators
       type: Number,
       default: 4.5,
+      min: [1, 'Ratings should be above or equal 1.0'],
+      max: [5, 'Ratings should be less or equal 5.0'],
     },
     ratingsQuantity: {
       type: Number,
@@ -91,6 +99,14 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`the query took ${Date.now() - this.start} milliseconds`);
   console.log(docs);
+
+  next();
+});
+
+//AGGREGATION MEDDLEWARE
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
 
   next();
 });
