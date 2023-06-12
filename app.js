@@ -8,6 +8,8 @@ const app = express();
 
 const tourRouter = require('./Routes/tourRouter');
 const userRouter = require('./Routes/userRouter');
+const globalErrorHandler = require('./Controllers/errorControllers');
+const AppError = require('./utils/AppError');
 
 // MIDDLEWARES
 app.use(express.json());
@@ -44,12 +46,21 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+// Handling all the unhandled routes
 
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Can't find ${req.originalUrl} on this server! `,
-  });
+  // res.status(404).json({
+  //   status: 'fail',
+  //   message: `Can't find ${req.originalUrl} on this server! `,
+  // });
+
+  // const err = new Error(`Can't find ${req.originalUrl} on this server! `);
+  // err.status = 'fail';
+  // err.statusCode = 404;
+
+  next(new AppError(`Can't find ${req.originalUrl} on this server! `, 404));
 });
+// Global Error Handling
+app.use(globalErrorHandler);
 
 module.exports = app;
