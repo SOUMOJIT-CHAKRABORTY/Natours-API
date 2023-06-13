@@ -1,2 +1,2 @@
 ## Natours-Project
-# practiceing nodejs 
+# practicing nodejs 
