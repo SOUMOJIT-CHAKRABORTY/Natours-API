@@ -57,6 +57,8 @@ Includes other relevant endpoints specific to this project.
    cd Natours-Project
    npm install
    ```
+ #### Check package.json for start commands🙂  
+ 
 
    
 
